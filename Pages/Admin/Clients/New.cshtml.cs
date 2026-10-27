@@ -1,0 +1,76 @@
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+namespace GeekShopping.IdentityServer.Pages.Admin.Clients;
+
+[SecurityHeaders]
+[Authorize(Config.Policies.Admin)]
+public class NewModel(ClientRepository repository) : PageModel
+{
+    [BindProperty]
+    public CreateClientModel InputModel { get; set; } = default!;
+
+    [TempData]
+    public bool Created { get; set; }
+
+    [TempData]
+    public string? CreatedClientId { get; set; }
+
+    public void OnGet(string type) => InputModel = new CreateClientModel
+    {
+        Flow = type == "m2m" ? Flow.ClientCredentials : Flow.CodeFlowWithPkce
+    };
+
+    public async Task<IActionResult> OnPostAsync(CancellationToken ct)
+    {
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
+        if (InputModel.Flow == Flow.CodeFlowWithPkce)
+        {
+            if (!string.IsNullOrWhiteSpace(InputModel.BaseUrl))
+            {
+                if (!Uri.TryCreate(InputModel.BaseUrl, UriKind.Absolute, out var baseUri))
+                {
+                    ModelState.AddModelError(nameof(InputModel.BaseUrl), "Base URL is not a valid absolute URI.");
+                    return Page();
+                }
+
+                if (baseUri.Scheme is not ("http" or "https"))
+                {
+                    ModelState.AddModelError(nameof(InputModel.BaseUrl), "Base URL must start with http:// or https://.");
+                    return Page();
+                }
+            }
+        }
+
+        else if (InputModel.Flow == Flow.ClientCredentials)
+        {
+            if (string.IsNullOrWhiteSpace(InputModel.Secret))
+            {
+                ModelState.AddModelError(nameof(InputModel.Secret), "Secret is required for Machine to Machine client.");
+                return Page();
+            }
+        }
+
+        try
+        {
+            await repository.CreateAsync(InputModel);
+            Created = true;
+            CreatedClientId = InputModel.ClientId;
+
+            return RedirectToPage();
+        }
+        catch (ValidationException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+        }
+
+        return Page();
+    }
+
+}

@@ -1,0 +1,44 @@
+@model GeekShopping.IdentityServer.ViewComponents.LicenseViewModel
+
+<div class="card h-100 text-bg-light">
+    <h5 class="card-header">
+        <i class="bi bi-award me-2"></i>
+        License
+        <a href="https://duende.link/p/pricing"
+           class="float-end">
+            <i class="bi bi-chat-heart"></i>
+            <span class="d-none">See Licenses</span>
+        </a>
+    </h5>
+    <div class="card-body bg-white">
+        @if (Model.HasLicense)
+        {
+            <table class="table table-sm">
+                <tr>
+                    <th scope="row">Company</th>
+                    <td>@Model.License.CompanyName</td>
+                </tr>
+                <tr>
+                    <th scope="row">Serial Number</th>
+                    <td>@Model.License.SerialNumber</td>
+                </tr>
+                <tr>
+                    <th scope="row">Expiration</th>
+                    <td>@Model.License.Expiration</td>
+                </tr>
+            </table>
+        }
+        else
+        {
+            <p class="display-4 mb-0 text-center">
+                @Model.LicenseText
+            </p>
+            <div class="text-center">
+
+                <a type="button" class="btn btn-primary btn-sm mt-3" href="https://duende.link/p/pricing" target="_blank" rel="noopener noreferrer">
+                    See IdentityServer Product Information
+                </a>
+            </div>
+        }
+    </div>
+</div>

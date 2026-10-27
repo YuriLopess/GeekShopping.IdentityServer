@@ -1,0 +1,18 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+namespace GeekShopping.IdentityServer.Pages.Admin.ApiScopes;
+
+[SecurityHeaders]
+[Authorize(Config.Policies.Admin)]
+public class IndexModel(ApiScopeRepository repository) : PageModel
+{
+    public IEnumerable<ApiScopeSummaryModel> Scopes { get; private set; } = default!;
+    public string? Filter { get; set; }
+
+    public async Task OnGetAsync(string? filter, CancellationToken ct)
+    {
+        Filter = filter;
+        Scopes = await repository.GetAllAsync(filter);
+    }
+}
