@@ -13,8 +13,11 @@
     <Content Remove="compilerconfig.json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="8.0.10" />
     <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="8.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.14" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.1">
       <PrivateAssets>all</PrivateAssets>
@@ -26,5 +29,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="compilerconfig.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Model\Context\" />
   </ItemGroup>
 </Project>
