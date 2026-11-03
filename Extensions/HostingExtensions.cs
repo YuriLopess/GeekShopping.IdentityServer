@@ -1,10 +1,13 @@
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using Duende.IdentityServer;
+using GeekShopping.IdentityServer.Model;
+using GeekShopping.IdentityServer.Model.Context;
 using GeekShopping.IdentityServer.Pages.Admin.ApiScopes;
 using GeekShopping.IdentityServer.Pages.Admin.Clients;
 using GeekShopping.IdentityServer.Pages.Admin.IdentityScopes;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -61,6 +64,15 @@ internal static class HostingExtensions
 
         // Configure the JwtSecurityTokenHandler to not map inbound claims automatically
         JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+        // ASP.NET Identity: users and roles stored in PostgreSQL.
+        // AddIdentity must be called before AddIdentityServer.
+        _ = builder.Services.AddDbContext<PostgresSQLContext>(options =>
+            options.UseNpgsql(connectionString));
+
+        _ = builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<PostgresSQLContext>()
+            .AddDefaultTokenProviders();
 
         var isBuilder = builder.Services
             .AddIdentityServer(options =>
