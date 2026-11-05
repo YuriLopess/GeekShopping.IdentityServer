@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using Duende.IdentityServer;
+using GeekShopping.IdentityServer.Initializer;
 using GeekShopping.IdentityServer.Model;
 using GeekShopping.IdentityServer.Model.Context;
 using GeekShopping.IdentityServer.Pages.Admin.ApiScopes;
@@ -73,6 +74,8 @@ internal static class HostingExtensions
         _ = builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<PostgresSQLContext>()
             .AddDefaultTokenProviders();
+
+        _ = builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
         var isBuilder = builder.Services
             .AddIdentityServer(options =>

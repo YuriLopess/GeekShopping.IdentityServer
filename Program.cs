@@ -3,6 +3,7 @@ using System.Text;
 using Duende.IdentityServer.Licensing;
 using GeekShopping.IdentityServer;
 using GeekShopping.IdentityServer.Extensions;
+using GeekShopping.IdentityServer.Initializer;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -24,6 +25,10 @@ try
     // in production you will likely want a different approach.
     Log.Information("Seeding database...");
     SeedData.EnsureSeedData(app);
+    using (var scope = app.Services.CreateScope())
+    {
+        scope.ServiceProvider.GetRequiredService<IDbInitializer>().Initialize();
+    }
     Log.Information("Done seeding database.");
 
     if (app.Environment.IsDevelopment())
